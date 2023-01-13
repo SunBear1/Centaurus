@@ -1,13 +1,7 @@
 import math
-
-import networkx
-import networkx as nx
-from networkx import Graph, DiGraph
-from graph import get_bus_stop_details
 from datetime import datetime, timedelta
-import requests
-from collections import OrderedDict
-from distance import calc_time
+
+from networkx import Graph, DiGraph
 
 DEPURTE_TIME = 2
 WALKING_BONUS_TIME = 1
@@ -106,7 +100,6 @@ def convert_data(routes, path, G):
 if __name__ == "__main__":
     import json
     import networkx
-    from networkx.readwrite import json_graph
 
     with open("../out.json") as f:
         G: DiGraph = networkx.node_link_graph(json.load(f))

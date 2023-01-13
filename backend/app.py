@@ -2,19 +2,20 @@ import json
 
 import networkx
 from flask import Flask, request
-from networkx import DiGraph
 from flask_cors import CORS
-from backend.graph import create_graph, read_routes_to_graph
+from networkx import DiGraph
+
 from backend.weigthCalc import predict_connections
 
 app = Flask(__name__)
 CORS = CORS(app, resources={r"/*": {"origins": "*"}})
 
-#graph = create_graph(routes=read_routes_to_graph(), date="2023-01-13")
+
+# graph = create_graph(routes=read_routes_to_graph(), date="2023-01-13")
 @app.route("/predict")
 def predict():
     global graph
-    #graph = create_graph(routes=read_routes_to_graph(), date="2023-01-13")
+    # graph = create_graph(routes=read_routes_to_graph(), date="2023-01-13")
     destination = request.args.get('dest')
     start = request.args.get('start')
     date_now = request.args.get('date')

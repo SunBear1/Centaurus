@@ -1,22 +1,21 @@
-import json
 import math
+from collections import OrderedDict
+from datetime import datetime
 
 import networkx
-from networkx import DiGraph
-from pyvis.network import Network
 import requests
-from datetime import datetime
-from collections import OrderedDict
-import matplotlib.pyplot as plt
+from networkx import DiGraph
 
 from distance import calc_time
 
 BUS_STOP_DETAILS = {}
 MAX_TIME = 30
 
+
 def update_node_estimated_departures(graph) -> list:
     for key in BUS_STOP_DETAILS.keys():
         graph.nodes(key)
+
 
 def add_walking(G: DiGraph):
     for id_A in G.nodes:
@@ -26,9 +25,8 @@ def add_walking(G: DiGraph):
                 try:
                     G.edges[id_A, id_B]["walkTime"] = time
                 except:
-                    G.add_edge(id_A,id_B)
+                    G.add_edge(id_A, id_B)
                     G.edges[id_A, id_B]["walkTime"] = time
-
 
 
 def read_routes_to_graph() -> list:
@@ -137,7 +135,6 @@ def create_graph(routes, date):
         print(f"{j}/{len(routes)}", " completed")
         j = j + 1
     return G
-
 
 # get_bus_stop_details()
 # G = create_graph(routes=read_routes_to_graph(), date="2023-01-13")

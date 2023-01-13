@@ -1,6 +1,5 @@
-import json
-from math import radians, sin, cos
 from math import atan2, sqrt
+from math import radians, sin, cos
 
 
 def calc_time(geolocationA: dict, geolocationB: dict) -> float:
@@ -15,7 +14,7 @@ def calc_time(geolocationA: dict, geolocationB: dict) -> float:
     dlon = lon2 - lon1
     dlat = lat2 - lat1
 
-    a = sin(dlat / 2)**2 + cos(lat1) * cos(lat2) * sin(dlon / 2)**2
+    a = sin(dlat / 2) ** 2 + cos(lat1) * cos(lat2) * sin(dlon / 2) ** 2
     c = 2 * atan2(sqrt(a), sqrt(1 - a))
 
     distance = R * c
