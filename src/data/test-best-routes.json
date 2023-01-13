@@ -1,0 +1,17 @@
+[
+    {
+        "route": [
+            "linia1"
+        ],
+        "departure_time": "1899-12-30T12:59:00",
+        "arrival_time": "1899-12-30T13:22:00"
+    },
+    {
+        "route": [
+            "linia1",
+            "linia2"
+        ],
+        "departure_time": "1899-12-30T13:09:00",
+        "arrival_time": "1899-12-30T13:55:00"
+    }
+]
