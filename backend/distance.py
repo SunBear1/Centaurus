@@ -8,9 +8,9 @@ def calc_time(geolocationA: dict, geolocationB: dict) -> float:
     walking_speed_minutes_per_kilometr = 15
 
     lat1 = radians(geolocationA["Lat"])
-    lon1 = radians(geolocationA["Lon"])
+    lon1 = radians(geolocationA["Long"])
     lat2 = radians(geolocationB["Lat"])
-    lon2 = radians(geolocationB["Lon"])
+    lon2 = radians(geolocationB["Long"])
 
     dlon = lon2 - lon1
     dlat = lat2 - lat1
