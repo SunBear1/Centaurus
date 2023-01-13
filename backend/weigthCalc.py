@@ -20,7 +20,9 @@ TRAVEL_TIME = 1
 
 def predict_connections(graph_struct: Graph, start: int, dest: int):
     update_departure_times(graph_struct=graph_struct)
-    run_dijktra(graph_struct, start, dest)
+    routes, path = run_dijktra(graph_struct, start, dest)
+    return convert_data(routes, path, graph_struct)
+
         
 
 def update_departure_times(graph_struct):
@@ -40,7 +42,7 @@ def run_dijktra(graph_struct: Graph, start: int, dest: int):
 
 
 def create_func(G: Graph):
-    now = datetime.fromisocalendar(2023,2,5)
+    now = datetime.now()
 
     def weight_cost_func(u, v, d):
         relative_time = now + timedelta(minutes=G.nodes[u].get("relative_time", 0))
@@ -77,7 +79,7 @@ def create_func(G: Graph):
     return weight_cost_func
 
 def convert_data(routes, path, G):
-    datastruct = [{"route": [], "departure_time": 3, "travel_time": 15, "coordinates": []}]
+    datastruct = [{"route": [], "departure_time": 3, "arrival_time": 15, "coordinates": []}]
 
     travel_time = 0
     for i, route in enumerate(routes):
@@ -87,13 +89,18 @@ def convert_data(routes, path, G):
             else:
                 datastruct[0]["departure_time"] = route[2].strftime("%Y-%m-%dT%H:%M:%S")
 
-        travel_time += route[1]
+        if i == len(routes) - 1:
+            if isinstance(route[2], str):
+                datastruct[0]["arrival_time"] = route[2]
+            else:
+                datastruct[0]["arrival_time"] = route[2].strftime("%Y-%m-%dT%H:%M:%S")
         #unikalne wartosci
         datastruct[0]["route"].append(route[0])
     datastruct[0]["route"] = list(dict.fromkeys(datastruct[0]["route"]))
-    datastruct[0]["travel_time"] = travel_time
     for stop in path:
         datastruct[0]["coordinates"].append([G.nodes[stop]["location"]["Long"], G.nodes[stop]["location"]["Lat"]])
+
+    return datastruct
 
 
 if __name__ == "__main__":

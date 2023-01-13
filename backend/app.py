@@ -1,6 +1,8 @@
 import json
 
-from flask import Flask
+import networkx
+from flask import Flask, request
+from networkx import DiGraph
 
 from backend.graph import create_graph, read_routes_to_graph
 from backend.weigthCalc import predict_connections
@@ -8,16 +10,19 @@ from backend.weigthCalc import predict_connections
 app = Flask(__name__)
 
 graph = create_graph(routes=read_routes_to_graph(), date="2023-01-13")
-
-@app.route("/")
-def hello_world():
-    return "<p>Hello, World!</p>"
-
-
 @app.route("/predict")
 def predict():
-    start = 1113
-    destination = 1114
-    result = predict_connections(graph_struct=graph, start=start, desc=destination)
-    return json.dumps(result, encoding="utf-8")
+    global graph
+    #graph = create_graph(routes=read_routes_to_graph(), date="2023-01-13")
+    destination = request.args.get('dest')
+    start = request.args.get('start')
+    date_now = request.args.get('date')
+    with open("../out.json") as f:
+        G: DiGraph = networkx.node_link_graph(json.load(f))
+    result = predict_connections(graph_struct=G, start=int(start), dest=int(destination))
+    return json.dumps(result).encode("utf8")
+
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=5000)
 
