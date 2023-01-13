@@ -8,7 +8,8 @@ import requests
 from datetime import datetime
 from collections import OrderedDict
 import matplotlib.pyplot as plt
-from backend.distance import calc_time
+
+from distance import calc_time
 
 BUS_STOP_DETAILS = {}
 MAX_TIME = 30
@@ -137,7 +138,7 @@ def create_graph(routes, date):
         j = j + 1
     return G
 
-#
+
 # get_bus_stop_details()
 # G = create_graph(routes=read_routes_to_graph(), date="2023-01-13")
 # add_walking(G)
