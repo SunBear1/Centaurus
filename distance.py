@@ -22,9 +22,12 @@ def calc_time(geolocationA: dict, geolocationB: dict) -> float:
     return distance * walking_speed_minutes_per_kilometr
 
 
-data = json.load(open("busStops.json"))
-result = {stop_id: {stop_id: 0 for stop_id in data.keys() } for stop_id in data.keys() }
-for stop_id_A in result.keys():
-    for stop_id_B in result[stop_id_A].keys():
-        result[stop_id_A][stop_id_B] = calc_time(data[stop_id_A], data[stop_id_B])
-print(result)
+# data = json.load(open("busStops.json"))
+# result = {stop_id: {stop_id: 0 for stop_id in data.keys() } for stop_id in data.keys() }
+# for stop_id_A in result.keys():
+#     for stop_id_B in result[stop_id_A].keys():
+#         result[stop_id_A][stop_id_B] = calc_time(data[stop_id_A], data[stop_id_B])
+# print(result)
+
+if __name__ == "__main__":
+    print("dupe")
