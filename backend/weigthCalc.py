@@ -13,7 +13,7 @@ from backend.distance import calc_time
 
 
 DEPURTE_TIME = 2
-
+WALKING_BONUS_TIME = 1
 ID = 0
 
 TRAVEL_TIME = 1
@@ -47,7 +47,7 @@ def create_func(G: Graph):
     def weight_cost_func(u, v, d):
         relative_time = now + timedelta(minutes=G.nodes[u].get("relative_time", 0))
         if "routes" not in d:
-            travel_time = d["walkTime"]
+            travel_time = d["walkTime"] + WALKING_BONUS_TIME
             chosen_line = ("W", travel_time, relative_time)
         else:
             connection_B = G.nodes[v].get("connections", [])
