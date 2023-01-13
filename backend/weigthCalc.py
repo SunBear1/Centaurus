@@ -9,6 +9,13 @@ from datetime import datetime, timedelta
 import requests
 from collections import OrderedDict
 
+DEPURTE_TIME = 2
+
+ID = 0
+
+TRAVEL_TIME = 1
+
+
 def predict_connections(graph_struct: Graph, start: int, dest: int):
     update_departure_times(graph_struct=graph_struct)
     run_dijktra(graph_struct, start, dest)
@@ -31,40 +38,24 @@ def run_dijktra(graph_struct: Graph, start: int, dest: int):
 
 def create_func(G: Graph):
     now = datetime.now()
+
     def weight_cost_func(u, v, d):
-        connection_A = G.nodes[u].get("connections")
         connection_B = G.nodes[v].get("connections")
-        possible_routes = dict()
+
         departure_times = []
         relative_time = now + timedelta(minutes=G.nodes[u].get("relative_time", 0))
+
         for route in connection_B:
             time_diff = (datetime.strptime(route["estimatedDepartureTime"], "%Y-%m-%dT%H:%M:%S") - relative_time).seconds/60
             if time_diff >= 0 and route["routeId"] in d["routes"]:
                 departure_times.append((route["routeId"], time_diff + d["time"], route["estimatedDepartureTime"]))
 
-            xd = False
-            if time_diff >= -1 and route["routeId"] in (d.get("chosen_line", "WRONG") and d["routes"]):
-                soonest_departure = (route["routeId"], time_diff+d["time"], route["estimatedDepartureTime"])
-                xd = True
-                break
+        soonest_departure = min(departure_times, key=lambda x: x[TRAVEL_TIME])
 
-
-        if not xd:
-            found = False
-            departure_times.sort(key=lambda x: x[1])
-            # for i in range(5):
-            #     if d.get("last_line", "xxx") == departure_times[i][0]:
-            #         soonest_departure = departure_times[i]
-            #         found = True
-
-            if not found:
-                soonest_departure = min(departure_times,key=lambda x: x[1])
-
-        d["last_line"] = soonest_departure[0]
-        d["chosen_line"] = (soonest_departure[0], soonest_departure[2])
-        soonest_dep = math.ceil(soonest_departure[1])
-        G.nodes[v]["relative_time"] = min(G.nodes[u].get("relative_time", 0) + soonest_dep, G.nodes[v].get("relative_time", 9999999999))
-        return soonest_dep
+        d["chosen_line"] = (soonest_departure[ID], soonest_departure[DEPURTE_TIME])
+        travel_time = math.ceil(soonest_departure[TRAVEL_TIME])
+        G.nodes[v]["relative_time"] = min(G.nodes[u].get("relative_time", 0) + travel_time, G.nodes[v].get("relative_time", 9999999999))
+        return travel_time
 
     return weight_cost_func
 
