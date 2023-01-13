@@ -4,12 +4,11 @@ import networkx
 import networkx as nx
 from fontTools.varLib.plot import stops
 from networkx import Graph, DiGraph
-# from graph import BUS_STOP_DETAILS
+from graph import get_bus_stop_details
 from datetime import datetime, timedelta
 import requests
 from collections import OrderedDict
-
-from backend.distance import calc_time
+from distance import calc_time
 
 
 DEPURTE_TIME = 2
@@ -37,8 +36,7 @@ def run_dijktra(graph_struct: Graph, start: int, dest: int):
     routes = []
     for i in range(len(path) - 1):
         routes.append(graph_struct.edges[path[i],path[i+1]]["chosen_line"])
-    print(path)
-    return routes
+    return routes, path
 
 
 def create_func(G: Graph):
@@ -51,10 +49,7 @@ def create_func(G: Graph):
             chosen_line = ("W", travel_time, relative_time)
         else:
             connection_B = G.nodes[v].get("connections", [])
-
             departure_times = []
-
-
             for route in connection_B:
                 time_diff = (datetime.strptime(route["estimatedDepartureTime"], "%Y-%m-%dT%H:%M:%S") - relative_time).seconds/60
                 if time_diff >= 0 and route["routeId"] in d["routes"]:
@@ -67,7 +62,8 @@ def create_func(G: Graph):
                 travel_time = 999999
             walk_travel_time = d.get("walkTime", 999999)
             if walk_travel_time < travel_time:
-                chosen_line = ("W", walk_travel_time, relative_time)
+                converted_time = relative_time.strftime('%Y-%m-%dT%H:%M:%S')
+                chosen_line = ("W", walk_travel_time, converted_time)
             else:
                 chosen_line = (soonest_departure[ID], travel_time, soonest_departure[DEPURTE_TIME])
 
@@ -80,10 +76,24 @@ def create_func(G: Graph):
 
     return weight_cost_func
 
-def nodage_parserage(edges):
-    pass
+def convert_data(routes, path, G):
+    datastruct = [{"route": [], "departure_time": 3, "travel_time": 15, "coordinates": []}]
 
+    travel_time = 0
+    for i, route in enumerate(routes):
+        if i==0:
+            if isinstance(route[2],str):
+                datastruct[0]["departure_time"] = route[2]
+            else:
+                datastruct[0]["departure_time"] = route[2].strftime("%Y-%m-%dT%H:%M:%S")
 
+        travel_time += route[1]
+        #unikalne wartosci
+        datastruct[0]["route"].append(route[0])
+    datastruct[0]["route"] = list(dict.fromkeys(datastruct[0]["route"]))
+    datastruct[0]["travel_time"] = travel_time
+    for stop in path:
+        datastruct[0]["coordinates"].append([G.nodes[stop]["location"]["Long"], G.nodes[stop]["location"]["Lat"]])
 
 
 if __name__ == "__main__":
@@ -94,6 +104,7 @@ if __name__ == "__main__":
     with open("../out.json") as f:
         G: DiGraph = networkx.node_link_graph(json.load(f))
         #G = G.subgraph([2021, 2019, 2017, 2072])
-        print(run_dijktra(G, 2072, 2021))
+    routes, path = run_dijktra(G, 2072, 2021)
+    convert_data(routes, path, G)
 
     #update_departure_times(graph_struct=Graph)

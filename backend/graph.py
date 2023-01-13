@@ -8,7 +8,6 @@ import requests
 from datetime import datetime
 from collections import OrderedDict
 import matplotlib.pyplot as plt
-
 from backend.distance import calc_time
 
 BUS_STOP_DETAILS = {}
@@ -138,14 +137,14 @@ def create_graph(routes, date):
         j = j + 1
     return G
 
-
-get_bus_stop_details()
-G = create_graph(routes=read_routes_to_graph(), date="2023-01-13")
-add_walking(G)
-graph = json.dumps(networkx.node_link_data(G))
-
-with open("../out.json", "w", encoding="utf-8") as outfile:
-    outfile.write(graph)
+#
+# get_bus_stop_details()
+# G = create_graph(routes=read_routes_to_graph(), date="2023-01-13")
+# add_walking(G)
+# graph = json.dumps(networkx.node_link_data(G))
+#
+# with open("../out.json", "w", encoding="utf-8") as outfile:
+#     outfile.write(graph)
 
 
 # networkx.draw(G, with_labels=True)
