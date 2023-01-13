@@ -28,16 +28,18 @@ def update_departure_times(graph_struct):
         
 
 def run_dijktra(graph_struct: Graph, start: int, dest: int):
-
+    for key in graph_struct.nodes.keys():
+        graph_struct.nodes[key]["connections"] = sorted(graph_struct.nodes[key]["connections"], key=lambda x: x["estimatedDepartureTime"])
     path = networkx.dijkstra_path(graph_struct, start, dest, create_func(graph_struct))
     routes = []
     for i in range(len(path) - 1):
         routes.append(graph_struct.edges[path[i],path[i+1]]["chosen_line"])
+    print(path)
     return routes
 
 
 def create_func(G: Graph):
-    now = datetime.now()
+    now = datetime.fromisocalendar(2023,2,5)
 
     def weight_cost_func(u, v, d):
         connection_B = G.nodes[v].get("connections")
@@ -51,9 +53,10 @@ def create_func(G: Graph):
                 departure_times.append((route["routeId"], time_diff + d["time"], route["estimatedDepartureTime"]))
 
         soonest_departure = min(departure_times, key=lambda x: x[TRAVEL_TIME])
-
-        d["chosen_line"] = (soonest_departure[ID], soonest_departure[DEPURTE_TIME])
         travel_time = math.ceil(soonest_departure[TRAVEL_TIME])
+
+        d["chosen_line"] = (soonest_departure[ID], travel_time, soonest_departure[DEPURTE_TIME])
+
         G.nodes[v]["relative_time"] = min(G.nodes[u].get("relative_time", 0) + travel_time, G.nodes[v].get("relative_time", 9999999999))
         return travel_time
 
@@ -69,7 +72,7 @@ if __name__ == "__main__":
 
     with open("../out.json") as f:
         G: Graph = networkx.node_link_graph(json.load(f))
-        # G = G.subgraph([1013,1025])
-        print(run_dijktra(G, 2021, 1017))
+        #G = G.subgraph([2021, 2019, 2017, 2072])
+        print(run_dijktra(G, 2072, 2021))
 
     #update_departure_times(graph_struct=Graph)

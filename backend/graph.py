@@ -46,7 +46,7 @@ def get_bus_stop_details():
 def create_graph(routes, date):
     j = 1
     connections = dict()
-    G = networkx.Graph()
+    G = networkx.DiGraph()
     for route in routes:
         r = requests.get(
             url=f"https://ckan2.multimediagdansk.pl/stopTimes?date={date}&routeId={route}"
